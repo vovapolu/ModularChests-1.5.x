@@ -93,7 +93,7 @@ public class ModularChestBaseBlock extends BlockContainer {
 	
 	@Override
 	public TileEntity createTileEntity(World world, int metadata) {
-		return new ModularChestTileEntityBase(54);
+		return new ModularChestTileEntityBase(20);
 	}
 	
 	

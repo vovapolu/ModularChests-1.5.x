@@ -23,6 +23,7 @@ public class CommonProxy implements IGuiHandler{
 		TileEntity te = world.getBlockTileEntity(X, Y, Z);
 		if (te != null && te instanceof ModularChestTileEntityBase) {
 			ModularChestTileEntityBase icte = (ModularChestTileEntityBase) te;
+			System.out.println("server gui size: " + icte.getSizeInventory());
 			return new ModularChestContainerBase(player.inventory, icte);
 		} else {
 			return null;

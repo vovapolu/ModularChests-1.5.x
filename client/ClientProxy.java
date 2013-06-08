@@ -26,10 +26,11 @@ public class ClientProxy extends CommonProxy{
 
     @Override
     public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z)
-    {
+    {    	
         TileEntity te = world.getBlockTileEntity(x, y, z);
         if (te != null && te instanceof ModularChestTileEntityBase)
         {
+        	System.out.println("gui size:" + ((ModularChestTileEntityBase) te).getSizeInventory());
             return new ModularChestGui(player.inventory, (ModularChestTileEntityBase) te);
         }
         else

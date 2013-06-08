@@ -12,32 +12,17 @@ public class ModularChestContainerBase extends Container {
 
 	public ModularChestContainerBase(InventoryPlayer inventoryPlayer, ModularChestTileEntityBase te) {
 
-		tileEntity = te;
-		int chestSize = tileEntity.getSizeInventory();
-		for (int row = 0; row < (chestSize + 8) / 9; row++)
-			for (int column = 0; column < Math.min(chestSize - row * 9, 9); column++)
-				addSlotToContainer(new Slot(tileEntity, row * 9 + column, 8 + column * 18, 18 + row * 18));											
-		int chestSlotsHeight = ((chestSize + 8) / 9) * 18 + 18;
+		tileEntity = te;									
 		
-		bindPlayerInventory(inventoryPlayer, chestSlotsHeight + 14);
+		Slot[] slots = ModularChestGuiMaker.addSlots(te.getSizeInventory(), tileEntity, inventoryPlayer);
+		for(Slot slot : slots)
+			addSlotToContainer(slot);
+		
 	}
 
 	@Override
 	public boolean canInteractWith(EntityPlayer player) {
 		return tileEntity.isUseableByPlayer(player);
-	}
-
-	protected void bindPlayerInventory(InventoryPlayer inventoryPlayer, int beginHeight) {
-		for (int row = 0; row < 3; row++) {
-			for (int column = 0; column < 9; column++) {
-				addSlotToContainer(new Slot(inventoryPlayer, column + row * 9 + 9, 8 + column * 18, 
-						beginHeight + row * 18));
-			}
-		}
-
-		for (int i = 0; i < 9; i++) {
-			addSlotToContainer(new Slot(inventoryPlayer, i, 8 + i * 18, 58 + beginHeight));
-		}
 	}
 
 	@Override

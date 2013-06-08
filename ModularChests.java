@@ -34,6 +34,7 @@ public class ModularChests {
 
 	public static Block modularChestBlock = new ModularChestBaseBlock(500,
 			Material.ground);
+	public static Item addItem = new ModularChestAddItem(5001);
 
 	@PreInit
 	public void preInit(FMLPreInitializationEvent event) {
@@ -42,7 +43,10 @@ public class ModularChests {
 	@Init
 	public void load(FMLInitializationEvent event) {
 		GameRegistry.registerBlock(modularChestBlock, "ModularChest");
-		LanguageRegistry.addName(modularChestBlock, "Modular Chest");				
+		GameRegistry.registerItem(addItem, "AddItem");
+		LanguageRegistry.addName(modularChestBlock, "Modular Chest");
+		LanguageRegistry.addName(addItem, "Add Item");
+		GameRegistry.registerTileEntity(ModularChestTileEntityBase.class, "ModularChestTileEntity");
 		ClientRegistry.bindTileEntitySpecialRenderer(
 				ModularChestTileEntityBase.class, new ModularChestRenderer());
 		NetworkRegistry.instance().registerGuiHandler(instance, proxy);

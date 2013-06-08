@@ -21,7 +21,7 @@ public class ModularChestGuiHandler implements IGuiHandler {
         @Override
         public Object getClientGuiElement(int id, EntityPlayer player, World world,
                         int x, int y, int z) {
-                TileEntity tileEntity = world.getBlockTileEntity(x, y, z);
+                TileEntity tileEntity = world.getBlockTileEntity(x, y, z);                
                 if(tileEntity instanceof ModularChestTileEntityBase){
                         return new ModularChestGui(player.inventory, (ModularChestTileEntityBase) tileEntity);
                 }

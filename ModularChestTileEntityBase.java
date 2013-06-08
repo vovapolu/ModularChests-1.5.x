@@ -1,34 +1,46 @@
 package vovapolu.modularchests;
 
+import java.util.ArrayList;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.network.INetworkManager;
+import net.minecraft.network.packet.Packet;
+import net.minecraft.network.packet.Packet132TileEntityData;
 import net.minecraft.tileentity.TileEntity;
 
 public class ModularChestTileEntityBase extends TileEntity implements IInventory {
 
-	private ItemStack[] inv;
+	private ArrayList<ItemStack> inv;
 	private byte facing;
 
 	public ModularChestTileEntityBase(int size) {
-		inv = new ItemStack[size];
+		inv = new ArrayList<ItemStack>();
+		for (int i = 0; i < size; i++)	
+			inv.add(null);
+	}
+	
+	public ModularChestTileEntityBase()
+	{
+		this(1);
 	}
 
 	@Override
 	public int getSizeInventory() {
-		return inv.length;
+		return inv.size();
 	}
 
 	@Override
-	public ItemStack getStackInSlot(int slot) {
-		return inv[slot];
+	public ItemStack getStackInSlot(int slot) {		
+		return inv.get(slot);
 	}
 
 	@Override
 	public void setInventorySlotContents(int slot, ItemStack stack) {
-		inv[slot] = stack;
+		inv.set(slot, stack);
 		if (stack != null && stack.stackSize > getInventoryStackLimit()) {
 			stack.stackSize = getInventoryStackLimit();
 		}
@@ -84,11 +96,17 @@ public class ModularChestTileEntityBase extends TileEntity implements IInventory
 		super.readFromNBT(tagCompound);
 
 		NBTTagList tagList = tagCompound.getTagList("Inventory");
-		for (int i = 0; i < tagList.tagCount(); i++) {
+		NBTTagCompound tagSize = (NBTTagCompound) tagList.tagAt(0);
+		int newSize = tagSize.getByte("Size");
+		System.out.println("wNBT" + newSize);
+		inv = new ArrayList<ItemStack>(newSize);
+		for (int i = 0; i < newSize; i++)
+			inv.add(null);
+		for (int i = 1; i < tagList.tagCount(); i++) {
 			NBTTagCompound tag = (NBTTagCompound) tagList.tagAt(i);
 			byte slot = tag.getByte("Slot");
-			if (slot >= 0 && slot < inv.length) {
-				inv[slot] = ItemStack.loadItemStackFromNBT(tag);
+			if (slot >= 0 && slot < inv.size()) {
+				inv.set(slot, ItemStack.loadItemStackFromNBT(tag));
 			}
 		}
 	}
@@ -98,8 +116,11 @@ public class ModularChestTileEntityBase extends TileEntity implements IInventory
 		super.writeToNBT(tagCompound);
 
 		NBTTagList itemList = new NBTTagList();
-		for (int i = 0; i < inv.length; i++) {
-			ItemStack stack = inv[i];
+		NBTTagCompound tagSize = new NBTTagCompound();
+		tagSize.setByte("Size", (byte)inv.size());
+		itemList.appendTag(tagSize);
+		for (int i = 0; i < inv.size(); i++) {
+			ItemStack stack = inv.get(i);
 			if (stack != null) {
 				NBTTagCompound tag = new NBTTagCompound();
 				tag.setByte("Slot", (byte) i);
@@ -132,4 +153,26 @@ public class ModularChestTileEntityBase extends TileEntity implements IInventory
 	public byte getFacing()	{
 		return facing;
 	}
+	
+	public void addSlot() {
+		System.out.println("tile entity size:" + getSizeInventory());
+		inv.add(null);
+		System.out.println("new tile entity size:" + getSizeInventory());
+	}
+	
+	@Override
+	public Packet getDescriptionPacket()
+	{
+		NBTTagCompound var1 = new NBTTagCompound();
+		this.writeToNBT(var1);
+		return new Packet132TileEntityData(this.xCoord, this.yCoord,
+				this.zCoord, 2, var1);
+	}
+	        
+	@Override
+	public void onDataPacket(INetworkManager netManager, Packet132TileEntityData packet)
+	{
+		readFromNBT(packet.customParam1);
+	}
+
 }
