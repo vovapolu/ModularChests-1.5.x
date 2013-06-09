@@ -12,7 +12,8 @@ public class ModularChestContainerBase extends Container {
 
 	public ModularChestContainerBase(InventoryPlayer inventoryPlayer, ModularChestTileEntityBase te) {
 
-		tileEntity = te;									
+		tileEntity = te;	
+		te.openChest();
 		
 		Slot[] slots = ModularChestGuiMaker.addSlots(te.getSizeInventory(), tileEntity, inventoryPlayer);
 		for(Slot slot : slots)
@@ -24,6 +25,13 @@ public class ModularChestContainerBase extends Container {
 	public boolean canInteractWith(EntityPlayer player) {
 		return tileEntity.isUseableByPlayer(player);
 	}
+	
+	@Override
+    public void onCraftGuiClosed(EntityPlayer entityplayer)
+    {
+        super.onCraftGuiClosed(entityplayer);
+        tileEntity.closeChest();
+    }
 
 	@Override
 	public ItemStack transferStackInSlot(EntityPlayer player, int slot) {

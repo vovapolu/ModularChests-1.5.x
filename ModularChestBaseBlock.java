@@ -32,17 +32,18 @@ public class ModularChestBaseBlock extends BlockContainer {
 		setCreativeTab(CreativeTabs.tabDecorations);
 		setUnlocalizedName("modularChest");
 	}
-	
+
 	@Override
 	public void registerIcons(IconRegister iconRegister) {
 		iconRegister.registerIcon("Test:test");
-	}	
+	}
 
 	@Override
 	public boolean onBlockActivated(World world, int x, int y, int z,
 			EntityPlayer player, int idk, float what, float these, float are) {
-		TileEntity tileEntity = world.getBlockTileEntity(x, y, z);			
-		if (tileEntity == null || player.isSneaking()) {			
+		TileEntity tileEntity = world.getBlockTileEntity(x, y, z);
+		if (tileEntity == null	|| player.isSneaking() || (player.getCurrentEquippedItem() != null 
+				&& player.getCurrentEquippedItem().getItem() == ModularChests.addItem)) {
 			return true;
 		}
 		player.openGui(ModularChests.instance, 0, world, x, y, z);
@@ -90,63 +91,55 @@ public class ModularChestBaseBlock extends BlockContainer {
 			}
 		}
 	}
-	
+
 	@Override
 	public TileEntity createTileEntity(World world, int metadata) {
 		return new ModularChestTileEntityBase(20);
 	}
-	
-	
+
 	@Override
-    public void onBlockPlacedBy(World world, int i, int j, int k, EntityLiving entityliving, ItemStack itemStack)
-    {
-        byte chestFacing = 0;
-        int facing = MathHelper.floor_double((double) ((entityliving.rotationYaw * 4F) / 360F) + 0.5D) & 3;
-        if (facing == 0)
-        {
-            chestFacing = 2;
-        }
-        if (facing == 1)
-        {
-            chestFacing = 5;
-        }
-        if (facing == 2)
-        {
-            chestFacing = 3;
-        }
-        if (facing == 3)
-        {
-            chestFacing = 4;
-        }
-        TileEntity te = world.getBlockTileEntity(i, j, k);
-        if (te != null && te instanceof ModularChestTileEntityBase)
-        {
-            ((ModularChestTileEntityBase) te).setFacing(chestFacing);
-            world.markBlockForUpdate(i, j, k);
-        }
-    }
+	public void onBlockPlacedBy(World world, int i, int j, int k,
+			EntityLiving entityliving, ItemStack itemStack) {
+		byte chestFacing = 0;
+		int facing = MathHelper
+				.floor_double((double) ((entityliving.rotationYaw * 4F) / 360F) + 0.5D) & 3;
+		if (facing == 0) {
+			chestFacing = 2;
+		}
+		if (facing == 1) {
+			chestFacing = 5;
+		}
+		if (facing == 2) {
+			chestFacing = 3;
+		}
+		if (facing == 3) {
+			chestFacing = 4;
+		}
+		TileEntity te = world.getBlockTileEntity(i, j, k);
+		if (te != null && te instanceof ModularChestTileEntityBase) {
+			((ModularChestTileEntityBase) te).setFacing(chestFacing);
+			world.markBlockForUpdate(i, j, k);
+		}
+	}
 
 	@Override
 	public TileEntity createNewTileEntity(World world) {
 		return null;
 	}
 
-    @Override
-    public boolean isOpaqueCube()
-    {
-        return false;
-    }
+	@Override
+	public boolean isOpaqueCube() {
+		return false;
+	}
 
-    @Override
-    public boolean renderAsNormalBlock()
-    {
-        return false;
-    }
+	@Override
+	public boolean renderAsNormalBlock() {
+		return false;
+	}
 
-    @Override
-    public int getRenderType()
-    {
-        return 22;
-    }
+	@Override
+	public int getRenderType() {
+		return 22;
+	}
 
 }

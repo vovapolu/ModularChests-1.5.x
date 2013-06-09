@@ -34,34 +34,25 @@ public class ModularChestRenderer extends TileEntitySpecialRenderer {
 	public ModularChestRenderer() {
 		model = new ModelChest();
 		random = new Random();
-		//renderBlocks = new RenderBlocks();
-		/*itemRenderer = new RenderItem() {
-			@Override
-			public byte getMiniBlockCount(ItemStack stack) {
-				return SignedBytes.saturatedCast(Math.min(stack.stackSize / 32,
-						15) + 1);
-			}
-
-			@Override
-			public byte getMiniItemCount(ItemStack stack) {
-				return SignedBytes.saturatedCast(Math.min(stack.stackSize / 32,
-						7) + 1);
-			}
-
-			@Override
-			public boolean shouldBob() {
-				return false;
-			}
-
-			@Override
-			public boolean shouldSpreadItems() {
-				return false;
-			}
-		};*/
-		//itemRenderer.setRenderManager(RenderManager.instance);
+		// renderBlocks = new RenderBlocks();
+		/*
+		 * itemRenderer = new RenderItem() {
+		 * 
+		 * @Override public byte getMiniBlockCount(ItemStack stack) { return
+		 * SignedBytes.saturatedCast(Math.min(stack.stackSize / 32, 15) + 1); }
+		 * 
+		 * @Override public byte getMiniItemCount(ItemStack stack) { return
+		 * SignedBytes.saturatedCast(Math.min(stack.stackSize / 32, 7) + 1); }
+		 * 
+		 * @Override public boolean shouldBob() { return false; }
+		 * 
+		 * @Override public boolean shouldSpreadItems() { return false; } };
+		 */
+		// itemRenderer.setRenderManager(RenderManager.instance);
 	}
 
-	public void render(ModularChestTileEntityBase tile, double x, double y,	double z, float partialTick) {
+	public void render(ModularChestTileEntityBase tile, double x, double y,
+			double z, float partialTick) {
 		if (tile == null) {
 			return;
 		}
@@ -91,11 +82,11 @@ public class ModularChestRenderer extends TileEntitySpecialRenderer {
 		}
 		glRotatef(k, 0.0F, 1.0F, 0.0F);
 		glTranslatef(-0.5F, -0.5F, -0.5F);
-		// float lidangle = tile.prevLidAngle + (tile.lidAngle -
-		// tile.prevLidAngle) * partialTick;
-		// lidangle = 1.0F - lidangle;
-		// lidangle = 1.0F - lidangle * lidangle * lidangle;
-		// model.chestLid.rotateAngleX = -((lidangle * 3.141593F) / 2.0F);
+		float lidangle = tile.prevLidAngle
+				+ (tile.lidAngle - tile.prevLidAngle) * partialTick;
+		lidangle = 1.0F - lidangle;
+		lidangle = 1.0F - lidangle * lidangle * lidangle;
+		model.chestLid.rotateAngleX = -((lidangle * (float)Math.PI) / 2.0F);
 		// Render the chest itself
 		model.renderAll();
 		glDisable(32826 /* GL_RESCALE_NORMAL_EXT */);
@@ -106,6 +97,6 @@ public class ModularChestRenderer extends TileEntitySpecialRenderer {
 	@Override
 	public void renderTileEntityAt(TileEntity tileentity, double x, double y,
 			double z, float f) {
-		render((ModularChestTileEntityBase)tileentity, x, y, z, f);
+		render((ModularChestTileEntityBase) tileentity, x, y, z, f);
 	}
 }
