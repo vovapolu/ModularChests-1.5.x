@@ -21,9 +21,9 @@ import net.minecraft.util.Icon;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 
-public class ModularChestBaseBlock extends BlockContainer {
-	public static final int blockId = 500;
-
+public class ModularChestBaseBlock extends BlockContainer {	
+	static int blockId;
+	
 	public ModularChestBaseBlock(int id, Material material) {
 		super(id, material);
 		setHardness(0.5F);
@@ -35,9 +35,10 @@ public class ModularChestBaseBlock extends BlockContainer {
 
 	@Override
 	public void registerIcons(IconRegister iconRegister) {
-		iconRegister.registerIcon("Test:test");
+		this.blockIcon = iconRegister.registerIcon("stone");
 	}
 
+	
 	@Override
 	public boolean onBlockActivated(World world, int x, int y, int z,
 			EntityPlayer player, int idk, float what, float these, float are) {
@@ -46,7 +47,7 @@ public class ModularChestBaseBlock extends BlockContainer {
 				&& player.getCurrentEquippedItem().getItem() == ModularChests.addItem)) {
 			return true;
 		}
-		player.openGui(ModularChests.instance, 0, world, x, y, z);
+		player.openGui(ModularChests.instance, 0, world, x, y, z);		
 		return true;
 	}
 
@@ -94,7 +95,7 @@ public class ModularChestBaseBlock extends BlockContainer {
 
 	@Override
 	public TileEntity createTileEntity(World world, int metadata) {
-		return new ModularChestTileEntityBase(20);
+		return new ModularChestTileEntityBase(100, 45);
 	}
 
 	@Override

@@ -5,6 +5,7 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 
@@ -12,6 +13,7 @@ import cpw.mods.fml.common.Loader;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.GuiButton;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
@@ -26,6 +28,11 @@ public class ModularChestGuiMaker {
 			inventory;
 
 	private static final int hot_bar_padding = 4;
+	private static final int x_padding_button1 = 79;
+	private static final int x_padding_button2 = 132;
+	private static final int y_button_padding = 6;
+
+	public static final int buttonWidth = 30, buttonHeight = 20;
 
 	static {
 		try {
@@ -192,11 +199,18 @@ public class ModularChestGuiMaker {
 				top_border.getHeight() - fontRenderer.FONT_HEIGHT, 0x404040);
 		fontRenderer.drawString(
 				StatCollector.translateToLocal("container.inventory"),
-				left_border.getWidth(), 
-				top_border.getHeight()
-				+ getSlotsHeight(slotsCount) * slot.getHeight()
-				+ middle_border.getHeight() - fontRenderer.FONT_HEIGHT,
+				left_border.getWidth(), top_border.getHeight()
+						+ getSlotsHeight(slotsCount) * slot.getHeight()
+						+ middle_border.getHeight() - fontRenderer.FONT_HEIGHT,
 				0x404040);
 		return;
+	}
+
+	static public void addButtons(List buttonList, int slotsCount, int x, int y)
+	{
+		buttonList.add(new GuiButton(0, x + x_padding_button1, y + top_border.getHeight() + 
+				getSlotsHeight(slotsCount) * slot.getHeight() + y_button_padding, buttonWidth, buttonHeight, "+"));
+		buttonList.add(new GuiButton(1, x + x_padding_button2, y + top_border.getHeight() + 
+				getSlotsHeight(slotsCount) * slot.getHeight() + y_button_padding, buttonWidth, buttonHeight, "-"));
 	}
 }

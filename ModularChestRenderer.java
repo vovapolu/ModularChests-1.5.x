@@ -34,21 +34,6 @@ public class ModularChestRenderer extends TileEntitySpecialRenderer {
 	public ModularChestRenderer() {
 		model = new ModelChest();
 		random = new Random();
-		// renderBlocks = new RenderBlocks();
-		/*
-		 * itemRenderer = new RenderItem() {
-		 * 
-		 * @Override public byte getMiniBlockCount(ItemStack stack) { return
-		 * SignedBytes.saturatedCast(Math.min(stack.stackSize / 32, 15) + 1); }
-		 * 
-		 * @Override public byte getMiniItemCount(ItemStack stack) { return
-		 * SignedBytes.saturatedCast(Math.min(stack.stackSize / 32, 7) + 1); }
-		 * 
-		 * @Override public boolean shouldBob() { return false; }
-		 * 
-		 * @Override public boolean shouldSpreadItems() { return false; } };
-		 */
-		// itemRenderer.setRenderManager(RenderManager.instance);
 	}
 
 	public void render(ModularChestTileEntityBase tile, double x, double y,

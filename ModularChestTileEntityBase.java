@@ -8,6 +8,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ContainerChest;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryLargeChest;
+import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -21,39 +22,57 @@ public class ModularChestTileEntityBase extends TileEntity implements
 		IInventory {
 
 	private ArrayList<ItemStack> inv;
+	private int displaySize;
+	private int shiftVal;
 	private byte facing;
 	private int numUsingPlayers;
 	private int ticksSinceSync;
 	public float lidAngle;
 	public float prevLidAngle;
+	public boolean isUpdated = true;
 
-	public ModularChestTileEntityBase(int size) {
-		inv = new ArrayList<ItemStack>();
-		for (int i = 0; i < size; i++)
+	public ModularChestTileEntityBase(int elemSize, int aDisplaySize) {
+		inv = new ArrayList<ItemStack>(elemSize);
+		for (int i = 0; i < elemSize; i++)
 			inv.add(null);
+		displaySize = aDisplaySize;
+		shiftVal = 0;
 	}
 
 	public ModularChestTileEntityBase() {
-		this(1);
+		this(1, 1);
 	}
 
 	@Override
 	public int getSizeInventory() {
+		return displaySize;
+	}
+	
+	public int getRealSizeInventory()
+	{
 		return inv.size();
 	}
 
 	@Override
 	public ItemStack getStackInSlot(int slot) {
-		return inv.get(slot);
+		if (shiftVal + slot >= inv.size())
+			return null;
+		else 
+			return inv.get(shiftVal + slot);
 	}
 
 	@Override
 	public void setInventorySlotContents(int slot, ItemStack stack) {
-		inv.set(slot, stack);
-		if (stack != null && stack.stackSize > getInventoryStackLimit()) {
-			stack.stackSize = getInventoryStackLimit();
+		if (slot + shiftVal < inv.size())
+		{
+			if (stack != inv.get(shiftVal + slot))
+				System.out.println(slot + " " + stack + " " + shiftVal + " " + inv.size());
+			inv.set(shiftVal + slot, stack);
+			if (stack != null && stack.stackSize > getInventoryStackLimit()) {
+				stack.stackSize = getInventoryStackLimit();
+			}
+			onInventoryChanged();	
 		}
-		onInventoryChanged();
 	}
 
 	@Override
@@ -127,12 +146,14 @@ public class ModularChestTileEntityBase extends TileEntity implements
 	public void readFromNBT(NBTTagCompound tagCompound) {
 		super.readFromNBT(tagCompound);
 
-		int newSize = tagCompound.getInteger("Size");
+		shiftVal = tagCompound.getInteger("ShiftValue");
+		int newSize = tagCompound.getInteger("ElemSize");
+		displaySize = tagCompound.getInteger("DisplaySize");
 		facing = tagCompound.getByte("Facing");
 		NBTTagList tagList = tagCompound.getTagList("Inventory");
 		inv = new ArrayList<ItemStack>(newSize);
 		for (int i = 0; i < newSize; i++)
-			inv.add(null);
+			inv.add(null);			
 		for (int i = 0; i < tagList.tagCount(); i++) {
 			NBTTagCompound tag = (NBTTagCompound) tagList.tagAt(i);
 			byte slot = tag.getByte("Slot");
@@ -145,8 +166,10 @@ public class ModularChestTileEntityBase extends TileEntity implements
 	@Override
 	public void writeToNBT(NBTTagCompound tagCompound) {
 		super.writeToNBT(tagCompound);
-
-		tagCompound.setInteger("Size", inv.size());
+		
+		tagCompound.setInteger("ShiftValue", shiftVal);
+		tagCompound.setInteger("ElemSize", inv.size());
+		tagCompound.setInteger("DisplaySize", displaySize);
 		tagCompound.setByte("Facing", facing);
 		NBTTagList itemList = new NBTTagList();
 		for (int i = 0; i < inv.size(); i++) {
@@ -182,12 +205,6 @@ public class ModularChestTileEntityBase extends TileEntity implements
 
 	public byte getFacing() {
 		return facing;
-	}
-
-	public void addSlot() {
-		System.out.println("tile entity size:" + getSizeInventory());
-		inv.add(null);
-		System.out.println("new tile entity size:" + getSizeInventory());
 	}
 
 	@Override
@@ -227,7 +244,7 @@ public class ModularChestTileEntityBase extends TileEntity implements
 			while (iterator.hasNext()) {
 				EntityPlayer entityplayer = (EntityPlayer) iterator.next();
 
-				if (entityplayer.openContainer instanceof ModularChestContainerBase)
+				if (entityplayer.openContainer instanceof ScrollContainer)
 					++numUsingPlayers;
 			}
 		}
@@ -269,5 +286,95 @@ public class ModularChestTileEntityBase extends TileEntity implements
 			}
 		}
 	}
+	
+	public void shiftItems(int aShiftVal)
+	{
+		shiftVal = aShiftVal;
+	}
+	
+	public int getShift()
+	{
+		return shiftVal;
+	}
+	
+	public boolean mergeItemStack(ItemStack stack)
+	{		
+        int i = 0;
+        boolean changed = false;
+        
+        ItemStack nowStack;
 
+        if (stack.isStackable())
+        {
+            while (stack.stackSize > 0 &&  i < inv.size())
+            {
+                nowStack = inv.get(i);
+
+                if (nowStack != null && nowStack.itemID == stack.itemID && (!stack.getHasSubtypes() || stack.getItemDamage() == nowStack.getItemDamage()) && ItemStack.areItemStackTagsEqual(stack, nowStack))
+                {
+                    int sum = nowStack.stackSize + stack.stackSize;
+
+                    if (sum <= stack.getMaxStackSize())
+                    {
+                        stack.stackSize = 0;
+                        nowStack.stackSize = sum;     
+                        changed = true;
+                    }
+                    else if (nowStack.stackSize < stack.getMaxStackSize())
+                    {
+                        stack.stackSize -= stack.getMaxStackSize() - nowStack.stackSize;
+                        nowStack.stackSize = stack.getMaxStackSize();
+                        changed = true;
+                    }
+                }
+
+                ++i;
+            }
+        }
+
+        if (stack.stackSize > 0)
+        {
+            i = 0;
+            while (i < inv.size())
+            {           
+                nowStack = inv.get(i);
+
+                if (nowStack == null)
+                {
+                    inv.set(i, stack.copy());                    
+                    stack.stackSize = 0; 
+                    changed = true;
+                    break;
+                }
+
+                ++i;
+            }
+        }
+        
+        return changed;
+	}
+	
+	public boolean isValidSlot(int slot)
+	{
+		return slot + shiftVal < inv.size();
+	}
+	
+	public int getValidSlots()
+	{
+		return Math.min(inv.size() - shiftVal, displaySize);
+	}
+	
+	public void addSlots(int count)
+	{
+		shiftItems(0);
+		for (int i = 0; i < count; i++)
+			inv.add(null);
+	}
+	
+	public void removeSlots(int count)
+	{
+		shiftItems(0);		
+		for (int i = 0; i < count; i++)
+			inv.remove(inv.size() - 1);
+	}
 }

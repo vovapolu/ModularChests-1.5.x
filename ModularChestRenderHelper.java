@@ -14,7 +14,7 @@ public class ModularChestRenderHelper extends ChestItemRenderHelper {
 	
     public ModularChestRenderHelper()
     {
-    	tileEntity = new ModularChestTileEntityBase(1);
+    	tileEntity = new ModularChestTileEntityBase(1, 1);
     }
 
     @Override

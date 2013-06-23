@@ -8,7 +8,6 @@ import net.minecraft.world.World;
 public class CommonProxy implements IGuiHandler{
 
 	public void registerRenderInformation() {
-
 	}
 
 	@Override
@@ -24,7 +23,7 @@ public class CommonProxy implements IGuiHandler{
 		if (te != null && te instanceof ModularChestTileEntityBase) {
 			ModularChestTileEntityBase icte = (ModularChestTileEntityBase) te;
 			System.out.println("server gui size: " + icte.getSizeInventory());
-			return new ModularChestContainerBase(player.inventory, icte);
+			return new ScrollContainer(player.inventory, icte);
 		} else {
 			return null;
 		}

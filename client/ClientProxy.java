@@ -7,9 +7,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import vovapolu.modularchests.CommonProxy;
-import vovapolu.modularchests.ModularChestGui;
 import vovapolu.modularchests.ModularChestRenderHelper;
 import vovapolu.modularchests.ModularChestTileEntityBase;
+import vovapolu.modularchests.client.gui.GuiScrollChest;
 
 public class ClientProxy extends CommonProxy{
 	@Override
@@ -31,12 +31,11 @@ public class ClientProxy extends CommonProxy{
         if (te != null && te instanceof ModularChestTileEntityBase)
         {
         	System.out.println("gui size:" + ((ModularChestTileEntityBase) te).getSizeInventory());
-            return new ModularChestGui(player.inventory, (ModularChestTileEntityBase) te);
+            return new GuiScrollChest(player.inventory, (ModularChestTileEntityBase) te);
         }
         else
         {
             return null;
         }
     }
-
 }

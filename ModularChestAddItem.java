@@ -13,6 +13,8 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
 public class ModularChestAddItem extends Item{
+	
+	private static final int addSize = 9;
 
 	public ModularChestAddItem(int id) {
 		super(id);
@@ -38,16 +40,15 @@ public class ModularChestAddItem extends Item{
         if (te != null && te instanceof ModularChestTileEntityBase)
         {
             ModularChestTileEntityBase modularChest = (ModularChestTileEntityBase) te;
-            modularChest.addSlot();                            
-            world.setBlockTileEntity(X, Y, Z, modularChest);
-            PacketDispatcher.sendPacketToPlayer(modularChest.getDescriptionPacket(), (Player)player);
+            modularChest.addSlots(addSize);                   
+            //world.setBlockTileEntity(X, Y, Z, modularChest);
+            PacketDispatcher.sendPacketToAllPlayers(PacketHandler.createTEPacket(modularChest));
             stack.stackSize--;            
         }
         else
         {
             return false;
-        }
-        //world.markBlockForUpdate(X, Y, Z);                
+        }               
         return true;
     }
 	
