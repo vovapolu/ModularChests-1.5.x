@@ -82,9 +82,9 @@ public class PacketHandler implements IPacketHandler {
 					te = playerSP.worldObj.getBlockTileEntity(x, y, z);
 				}
 
-				if (te instanceof ModularChestTileEntityBase) {
-					ModularChestTileEntityBase mte = (ModularChestTileEntityBase) te;
-					mte.shiftItems(shiftVal);
+				if (te instanceof ModularChestTileEntity) {
+					ModularChestTileEntity mte = (ModularChestTileEntity) te;
+					//mte.shiftItems(shiftVal);
 				}
 
 			} catch (IOException e) {
@@ -114,9 +114,9 @@ public class PacketHandler implements IPacketHandler {
 					te = playerSP.worldObj.getBlockTileEntity(x, y, z);
 				}
 
-				if (te instanceof ModularChestTileEntityBase) {
-					ModularChestTileEntityBase mte = (ModularChestTileEntityBase) te;
-					mte.isUpdated = update;
+				if (te instanceof ModularChestTileEntity) {
+					ModularChestTileEntity mte = (ModularChestTileEntity) te;
+
 				}
 
 			} catch (IOException e) {
@@ -155,7 +155,7 @@ public class PacketHandler implements IPacketHandler {
 	}
 
 	public static Packet250CustomPayload createSBPacket(
-			ModularChestTileEntityBase tileEntity) {
+			ModularChestTileEntity tileEntity) {
 		Packet250CustomPayload packet = new Packet250CustomPayload();
 
 		ByteArrayOutputStream array = new ByteArrayOutputStream();
@@ -163,12 +163,12 @@ public class PacketHandler implements IPacketHandler {
 
 		try {
 			int x = tileEntity.xCoord, y = tileEntity.yCoord, z = tileEntity.zCoord;
-			int shiftVal = tileEntity.getShift();
+			//XXX int shiftVal = tileEntity.getShift();
 
 			ostream.writeInt(x);
 			ostream.writeInt(y);
 			ostream.writeInt(z);
-			ostream.writeInt(shiftVal);
+			//XXX ostream.writeInt(shiftVal);
 			ostream.close();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -184,7 +184,7 @@ public class PacketHandler implements IPacketHandler {
 	}
 
 	public static Packet250CustomPayload createUTEPacket(
-			ModularChestTileEntityBase tileEntity, boolean value) {
+			ModularChestTileEntity tileEntity, boolean value) {
 		Packet250CustomPayload packet = new Packet250CustomPayload();
 
 		ByteArrayOutputStream array = new ByteArrayOutputStream();
@@ -192,7 +192,7 @@ public class PacketHandler implements IPacketHandler {
 
 		try {
 			int x = tileEntity.xCoord, y = tileEntity.yCoord, z = tileEntity.zCoord;
-			int shiftVal = tileEntity.getShift();
+			//XXX int shiftVal = tileEntity.getShift();
 			
 			ostream.writeInt(x);
 			ostream.writeInt(y);

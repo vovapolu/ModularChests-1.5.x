@@ -2,6 +2,8 @@ package vovapolu.modularchests;
 
 import java.util.Random;
 
+import org.lwjgl.opengl.GL11;
+
 import com.google.common.primitives.SignedBytes;
 
 import net.minecraft.client.model.ModelChest;
@@ -29,14 +31,14 @@ import static org.lwjgl.opengl.GL11.glTranslatef;
 public class ModularChestRenderer extends TileEntitySpecialRenderer {
 
 	private ModelChest model;
-	private Random random;
-
+	private Random random;	
+	
 	public ModularChestRenderer() {
 		model = new ModelChest();
-		random = new Random();
+		random = new Random();		
 	}
 
-	public void render(ModularChestTileEntityBase tile, double x, double y,
+	public void render(ModularChestTileEntity tile, double x, double y,
 			double z, float partialTick) {
 		if (tile == null) {
 			return;
@@ -45,7 +47,13 @@ public class ModularChestRenderer extends TileEntitySpecialRenderer {
 		if (tile != null && tile.getWorldObj() != null) {
 			facing = tile.getFacing();
 		}
-		bindTextureByName("/mods/ModularChests/textures/model/stoneChest.png");
+		
+	
+		ModularChestTextureMaker textureMaker = new ModularChestTextureMaker(tile.upgradesStorage);
+			
+		int num = this.tileEntityRenderer.renderEngine.allocateAndSetupTexture(textureMaker.getTexture());		
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, num);
+		//bindTextureByName("/mods/ModularChests/textures/model/stoneChest.png");
 		glPushMatrix();
 		glEnable(32826 /* GL_RESCALE_NORMAL_EXT */);
 		glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
@@ -82,6 +90,6 @@ public class ModularChestRenderer extends TileEntitySpecialRenderer {
 	@Override
 	public void renderTileEntityAt(TileEntity tileentity, double x, double y,
 			double z, float f) {
-		render((ModularChestTileEntityBase) tileentity, x, y, z, f);
+		render((ModularChestTileEntity) tileentity, x, y, z, f);
 	}
 }

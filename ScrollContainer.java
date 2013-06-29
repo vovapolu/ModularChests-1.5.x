@@ -9,24 +9,20 @@ import net.minecraft.item.ItemStack;
 
 public class ScrollContainer extends Container {
 
-	protected ModularChestTileEntityBase tileEntity;
+	protected ModularChestTileEntity tileEntity;
 	private InventoryPlayer inventoryPlayer;
 	public static final int slotsWidth = 9;
 	public static final int slotsHeight = 5;
 	private int prevBeginSlot = -1;
 	private int prevSlotsCount = -1;
 	private int prevValidSlotsCount = -1;
+	private int shiftVal = 0;
 
 	public ScrollContainer(InventoryPlayer aInventoryPlayer,
-			ModularChestTileEntityBase te) {
+			ModularChestTileEntity te) {
 		inventoryPlayer = aInventoryPlayer;
 		tileEntity = te;
 		te.openChest();
-
-		for (int row = 0; row < slotsHeight; row++)
-			for (int column = 0; column < slotsWidth; column++)
-				addSlotToContainer(new ScrollChestSlot(tileEntity, row * slotsWidth
-						+ column, 9 + 18 * column, 18 + 18 * row));
 
 		for (int column = 0; column < slotsWidth; column++)
 			addSlotToContainer(new ScrollChestSlot(inventoryPlayer, column,
@@ -36,7 +32,27 @@ public class ScrollContainer extends Container {
 			for (int column = 0; column < slotsWidth; column++)
 				addSlotToContainer(new ScrollChestSlot(inventoryPlayer, 9 + row
 						* slotsWidth + column, 9 + 18 * column, 112 + 18 * row));
-		scrollTo(0.0F);				
+
+		for (int i = 0; i < te.getRealSizeInventory(); i++)
+			addSlotToContainer(new ScrollChestSlot(tileEntity, i, -100, -100));
+
+		scrollTo(0.0F);
+	}
+
+	void shiftSlots(int beginSlot) {
+		shiftVal = beginSlot;
+		beginSlot += 36;
+		for (int i = 36; i < inventorySlots.size(); i++) {
+			if (i >= beginSlot && i < beginSlot + slotsWidth * slotsHeight) {
+				int column = (i - beginSlot) % slotsWidth;
+				int row = (i - beginSlot) / slotsWidth;
+				((Slot) inventorySlots.get(i)).xDisplayPosition = 9 + 18 * column;
+				((Slot) inventorySlots.get(i)).yDisplayPosition = 18 + 18 * row;
+			} else {
+				((Slot) inventorySlots.get(i)).xDisplayPosition = -100;
+				((Slot) inventorySlots.get(i)).yDisplayPosition = -100;
+			}
+		}
 	}
 
 	@Override
@@ -59,10 +75,8 @@ public class ScrollContainer extends Container {
 			ItemStack stackInSlot = slotObject.getStack();
 			stack = stackInSlot.copy();
 
-			if (slot < tileEntity.getSizeInventory()) {
-				if (!this.mergeItemStack(stackInSlot,
-						tileEntity.getSizeInventory(),
-						tileEntity.getSizeInventory() + 36, true)) {
+			if (slot > 36) {
+				if (!this.mergeItemStack(stackInSlot, 0, 36, true)) {
 					return null;
 				}
 			} else if (!tileEntity.mergeItemStack(stackInSlot)) {
@@ -80,22 +94,39 @@ public class ScrollContainer extends Container {
 			}
 			slotObject.onPickupFromSlot(player, stackInSlot);
 		}
-		//updateSlots();
+		// updateSlots();
 		return stack;
 	}
-
-	public boolean scrollTo(float val) {
+	
+	public int getShiftSlot(float shiftVal)
+	{
 		int slotsCount = tileEntity.getRealSizeInventory();
 		int scrollSlotsHeight = (slotsCount + slotsWidth - 1) / slotsWidth
 				- slotsHeight;
-		int beginslot = (int) (scrollSlotsHeight * val) * slotsWidth;
+		return (int) (scrollSlotsHeight * shiftVal) * slotsWidth;
+	}
+	
+	public int getShiftRow(float shiftVal)
+	{
+		return getShiftSlot(shiftVal) / slotsWidth;
+	}	
+	
+	public float getShiftHeightOfRow()
+	{
+		int slotsCount = tileEntity.getRealSizeInventory();
+		int scrollSlotsHeight = (slotsCount + slotsWidth - 1) / slotsWidth
+				- slotsHeight;
+		return 1.0F / scrollSlotsHeight;
+	}
+
+	public boolean scrollTo(float val) {
+		int beginslot = getShiftSlot(val);
 		if (beginslot < 0)
 			beginslot = 0;
 		if (beginslot == prevBeginSlot)
 			return false;
 		prevBeginSlot = beginslot;
-		tileEntity.shiftItems(beginslot);
-		hideSlots();
+		shiftSlots(beginslot);
 		return true;
 	}
 
@@ -103,29 +134,27 @@ public class ScrollContainer extends Container {
 		for (int i = 0; i < slotsWidth * slotsHeight; i++) {
 			Slot slot = (Slot) inventorySlots.get(i);
 			slot.putStack(tileEntity.getStackInSlot(i));
-			slot.onSlotChanged();			
+			slot.onSlotChanged();
 		}
 	}
-	
-	public void hideSlots()
-	{
-		for (int i = 0; i < slotsHeight * slotsWidth; i++)
-			((ScrollChestSlot)inventorySlots.get(i)).setActive(tileEntity.isValidSlot(i));
-	}
-	
+
 	@Override
 	public void detectAndSendChanges() {
-		if (tileEntity.getRealSizeInventory() != prevSlotsCount)
-		{
+		/*if (tileEntity.getRealSizeInventory() != prevSlotsCount) {
 			scrollTo(0.0F);
 			prevSlotsCount = tileEntity.getRealSizeInventory();
-		}
-		
-		if (tileEntity.getValidSlots() != prevValidSlotsCount)
-		{
-			hideSlots();
-			prevValidSlotsCount = tileEntity.getValidSlots();
-		}
+		}*/
+
 		super.detectAndSendChanges();
+	}
+	
+	public boolean isValidSlot(int slot)
+	{
+		return shiftVal + slot < tileEntity.getRealSizeInventory();
+	}
+	
+	public int getValidSlots()
+	{
+		return tileEntity.getRealSizeInventory() - shiftVal;
 	}
 }

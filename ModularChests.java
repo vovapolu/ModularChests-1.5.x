@@ -1,5 +1,9 @@
 package vovapolu.modularchests;
 
+import vovapolu.modularchests.items.BreakableUpgradeItem;
+import vovapolu.modularchests.items.CoreAddItem;
+import vovapolu.modularchests.items.StackSizeUpgradeItem;
+import vovapolu.modularchests.items.StorageAddItemType;
 import net.minecraft.item.ItemStack;
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.common.Mod;
@@ -35,12 +39,17 @@ public class ModularChests {
 	public static CommonProxy proxy;
 
 	public static Block modularChestBlock;
-	public static Item addItem;
+	public static Item coreAddItem;
+	public static StackSizeUpgradeItem stackSizeUpgradeItem;
+	public static BreakableUpgradeItem breakableUpgradeItem;
 	
 	// Cfg
 	public static int modularBlockId;
 	public static int addItemId;
-	public static int scrollChestOptimalTicks;
+	public static int coreAddItemId;
+	public static int StackSizeUpgradeItemId;
+	public static int inventoryFactor;
+	public static int BreakableUpgradeItemId;
 
 	@PreInit
 	public void preInit(FMLPreInitializationEvent event) {
@@ -48,14 +57,13 @@ public class ModularChests {
 				event.getSuggestedConfigurationFile());
 		cfg.load();
 		modularBlockId = cfg.getBlock("ModularChest", 500).getInt();
-		addItemId = cfg.getItem("AddItem", 5001).getInt();
-		Property scotProperty = cfg.get(Configuration.CATEGORY_GENERAL, "ScrollChestOptimalTicks", 3);
-        scotProperty.comment = "This value doesn't affect gameplay, but it affects some performance of Scroll Chest.\n" +
-        		"For example: if this value equals 0 then in Scroll Chest if you move slider too fast you will see some " +
-        		"duplication of items\n" +
-        		"Also this can happen at large values. The higher the value the less the risk that it will happen.";
-        
-        scrollChestOptimalTicks = scotProperty.getInt();
+		addItemId = cfg.getItem("AddItem", 6002).getInt();
+		coreAddItemId = cfg.getItem("CoreAddItem", 6001).getInt();
+		StackSizeUpgradeItemId = cfg.getItem("StackSizeUpgradeItem", 6000).getInt();
+		BreakableUpgradeItemId = cfg.getItem("BreakableUpgradeItem", 5999).getInt();
+		Property InventoryFactorProperty = cfg.get(Configuration.CATEGORY_GENERAL, "InventoryFactor", 5);		
+		inventoryFactor = InventoryFactorProperty.getInt();
+	
 		cfg.save();
 	}
 
@@ -63,17 +71,38 @@ public class ModularChests {
 	public void load(FMLInitializationEvent event) {
 		modularChestBlock = new ModularChestBaseBlock(modularBlockId,
 				Material.ground);
-		addItem = new ModularChestAddItem(addItemId);
-
+		coreAddItem = new CoreAddItem(coreAddItemId);
+		stackSizeUpgradeItem = new StackSizeUpgradeItem(StackSizeUpgradeItemId, "stackSizeUpgradeItem", 
+				"stackSizeItem", "redstoneBound.png");
+		breakableUpgradeItem = new BreakableUpgradeItem(BreakableUpgradeItemId, "breakableUpgradeItem", 
+				"breakableItem", "lapizBound.png");
+		
+		GameRegistry.registerItem(stackSizeUpgradeItem, "stackSizeUpgradeItem");
+		GameRegistry.registerItem(breakableUpgradeItem, "breakableUpgradeItem");
 		GameRegistry.registerBlock(modularChestBlock, "ModularChest");
-		GameRegistry.registerItem(addItem, "AddItem");
+		GameRegistry.registerItem(coreAddItem, "CoreAddItem");		
 		LanguageRegistry.addName(modularChestBlock, "Modular Chest");
-		LanguageRegistry.addName(addItem, "Add Item");
-		GameRegistry.registerTileEntity(ModularChestTileEntityBase.class,
+		LanguageRegistry.addName(coreAddItem, "Core Add Item");
+		LanguageRegistry.addName(breakableUpgradeItem, "Breakable Upgrade Item");
+		LanguageRegistry.addName(stackSizeUpgradeItem, "Stack Size Upgrade Item");
+		
+		GameRegistry.addRecipe(new ItemStack(coreAddItem), " x ", "xyx", " x ",
+		        'y', new ItemStack(Block.glass), 'x', new ItemStack(Block.stone));
+		GameRegistry.addRecipe(new ItemStack(modularChestBlock), "xxx", "xyx", "xxx",
+		        'y', new ItemStack(Block.chest), 'x', new ItemStack(Block.cobblestone));
+		GameRegistry.addRecipe(new ItemStack(stackSizeUpgradeItem), "xxx", "xcx", "xxx", 
+				'x', new ItemStack(Item.redstone), 'c', new ItemStack(coreAddItem));
+		GameRegistry.addRecipe(new ItemStack(breakableUpgradeItem), "xxx", "xcx", "xxx", 
+				'x', new ItemStack(Item.dyePowder, 1, 4), 'c', new ItemStack(coreAddItem));
+		
+		StorageAddItemType.registreItems();
+		
+		GameRegistry.registerTileEntity(ModularChestTileEntity.class,
 				"ModularChestTileEntity");
 		ClientRegistry.bindTileEntitySpecialRenderer(
-				ModularChestTileEntityBase.class, new ModularChestRenderer());
+				ModularChestTileEntity.class, new ModularChestRenderer());
 		NetworkRegistry.instance().registerGuiHandler(instance, proxy);
+		
 		proxy.registerRenderInformation();
 	}
 

@@ -10,11 +10,11 @@ import com.google.common.collect.Maps;
 
 
 public class ModularChestRenderHelper extends ChestItemRenderHelper {
-	private ModularChestTileEntityBase tileEntity;
+	private ModularChestTileEntity tileEntity;
 	
     public ModularChestRenderHelper()
     {
-    	tileEntity = new ModularChestTileEntityBase(1, 1);
+    	tileEntity = new ModularChestTileEntity(1, 1);
     }
 
     @Override

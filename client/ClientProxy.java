@@ -8,7 +8,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import vovapolu.modularchests.CommonProxy;
 import vovapolu.modularchests.ModularChestRenderHelper;
-import vovapolu.modularchests.ModularChestTileEntityBase;
+import vovapolu.modularchests.ModularChestTileEntity;
 import vovapolu.modularchests.client.gui.GuiScrollChest;
 
 public class ClientProxy extends CommonProxy{
@@ -28,10 +28,10 @@ public class ClientProxy extends CommonProxy{
     public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z)
     {    	
         TileEntity te = world.getBlockTileEntity(x, y, z);
-        if (te != null && te instanceof ModularChestTileEntityBase)
+        if (te != null && te instanceof ModularChestTileEntity)
         {
-        	System.out.println("gui size:" + ((ModularChestTileEntityBase) te).getSizeInventory());
-            return new GuiScrollChest(player.inventory, (ModularChestTileEntityBase) te);
+        	System.out.println("gui size:" + ((ModularChestTileEntity) te).getSizeInventory());
+            return new GuiScrollChest(player.inventory, (ModularChestTileEntity) te);
         }
         else
         {
