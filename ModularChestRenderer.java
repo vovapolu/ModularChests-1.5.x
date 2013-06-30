@@ -4,12 +4,17 @@ import java.util.Random;
 
 import org.lwjgl.opengl.GL11;
 
+import vovapolu.modularchests.items.ModularChestUpgradesStorage;
+
 import com.google.common.primitives.SignedBytes;
+
+import cpw.mods.fml.client.FMLClientHandler;
 
 import net.minecraft.client.model.ModelChest;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -30,28 +35,18 @@ import static org.lwjgl.opengl.GL11.glTranslatef;
 
 public class ModularChestRenderer extends TileEntitySpecialRenderer {
 
-	private ModelChest model;
-	private Random random;	
+	static private ModelChest model = new ModelChest();
+	static private Random random = new Random();
 	
-	public ModularChestRenderer() {
-		model = new ModelChest();
-		random = new Random();		
+	public ModularChestRenderer() {		
 	}
-
-	public void render(ModularChestTileEntity tile, double x, double y,
-			double z, float partialTick) {
-		if (tile == null) {
-			return;
-		}
-		int facing = 3;
-		if (tile != null && tile.getWorldObj() != null) {
-			facing = tile.getFacing();
-		}
-		
 	
-		ModularChestTextureMaker textureMaker = new ModularChestTextureMaker(tile.upgradesStorage);
+	static public void render(ModularChestUpgradesStorage storage, double x, double y, double z, 
+			float prevAngle, float angle, int facing, float particalTick)
+	{
+		ModularChestTextureMaker textureMaker = new ModularChestTextureMaker(storage);
 			
-		int num = this.tileEntityRenderer.renderEngine.allocateAndSetupTexture(textureMaker.getTexture());		
+		int num = FMLClientHandler.instance().getClient().renderEngine.allocateAndSetupTexture(textureMaker.getTexture());		
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, num);
 		//bindTextureByName("/mods/ModularChests/textures/model/stoneChest.png");
 		glPushMatrix();
@@ -75,8 +70,7 @@ public class ModularChestRenderer extends TileEntitySpecialRenderer {
 		}
 		glRotatef(k, 0.0F, 1.0F, 0.0F);
 		glTranslatef(-0.5F, -0.5F, -0.5F);
-		float lidangle = tile.prevLidAngle
-				+ (tile.lidAngle - tile.prevLidAngle) * partialTick;
+		float lidangle = prevAngle + (angle - prevAngle) * particalTick;
 		lidangle = 1.0F - lidangle;
 		lidangle = 1.0F - lidangle * lidangle * lidangle;
 		model.chestLid.rotateAngleX = -((lidangle * (float)Math.PI) / 2.0F);
@@ -85,6 +79,18 @@ public class ModularChestRenderer extends TileEntitySpecialRenderer {
 		glDisable(32826 /* GL_RESCALE_NORMAL_EXT */);
 		glPopMatrix();
 		glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+	}
+
+	static public void render(ModularChestTileEntity tile, double x, double y,
+			double z, float particalTick) {
+		if (tile == null) {
+			return;
+		}
+		int facing = 3;
+		if (tile.getWorldObj() != null) {
+			facing = tile.getFacing();
+		}
+		render(tile.upgradesStorage, x, y, z, tile.prevLidAngle, tile.lidAngle, facing, particalTick);
 	}
 
 	@Override

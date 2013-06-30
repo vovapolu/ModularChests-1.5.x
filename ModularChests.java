@@ -1,7 +1,10 @@
 package vovapolu.modularchests;
 
+import vovapolu.modularchests.block.ModularChestBaseBlock;
+import vovapolu.modularchests.block.ModularChestItemBlock;
 import vovapolu.modularchests.items.BreakableUpgradeItem;
 import vovapolu.modularchests.items.CoreAddItem;
+import vovapolu.modularchests.items.ModularChestItemRender;
 import vovapolu.modularchests.items.StackSizeUpgradeItem;
 import vovapolu.modularchests.items.StorageAddItemType;
 import net.minecraft.item.ItemStack;
@@ -24,6 +27,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.Property;
@@ -39,7 +43,7 @@ public class ModularChests {
 	public static CommonProxy proxy;
 
 	public static Block modularChestBlock;
-	public static Item coreAddItem;
+	public static Item coreUpgradeItem;
 	public static StackSizeUpgradeItem stackSizeUpgradeItem;
 	public static BreakableUpgradeItem breakableUpgradeItem;
 	
@@ -71,7 +75,7 @@ public class ModularChests {
 	public void load(FMLInitializationEvent event) {
 		modularChestBlock = new ModularChestBaseBlock(modularBlockId,
 				Material.ground);
-		coreAddItem = new CoreAddItem(coreAddItemId);
+		coreUpgradeItem = new CoreAddItem(coreAddItemId);
 		stackSizeUpgradeItem = new StackSizeUpgradeItem(StackSizeUpgradeItemId, "stackSizeUpgradeItem", 
 				"stackSizeItem", "redstoneBound.png");
 		breakableUpgradeItem = new BreakableUpgradeItem(BreakableUpgradeItemId, "breakableUpgradeItem", 
@@ -79,21 +83,21 @@ public class ModularChests {
 		
 		GameRegistry.registerItem(stackSizeUpgradeItem, "stackSizeUpgradeItem");
 		GameRegistry.registerItem(breakableUpgradeItem, "breakableUpgradeItem");
-		GameRegistry.registerBlock(modularChestBlock, "ModularChest");
-		GameRegistry.registerItem(coreAddItem, "CoreAddItem");		
+		GameRegistry.registerBlock(modularChestBlock, ModularChestItemBlock.class, "ModularChest");
+		GameRegistry.registerItem(coreUpgradeItem, "CoreUpgradeItem");		
 		LanguageRegistry.addName(modularChestBlock, "Modular Chest");
-		LanguageRegistry.addName(coreAddItem, "Core Add Item");
-		LanguageRegistry.addName(breakableUpgradeItem, "Breakable Upgrade Item");
-		LanguageRegistry.addName(stackSizeUpgradeItem, "Stack Size Upgrade Item");
+		LanguageRegistry.addName(coreUpgradeItem, "Upgrade Core");
+		LanguageRegistry.addName(breakableUpgradeItem, "Breakable Upgrade");
+		LanguageRegistry.addName(stackSizeUpgradeItem, "Stack Size Upgrade");
 		
-		GameRegistry.addRecipe(new ItemStack(coreAddItem), " x ", "xyx", " x ",
+		GameRegistry.addRecipe(new ItemStack(coreUpgradeItem), " x ", "xyx", " x ",
 		        'y', new ItemStack(Block.glass), 'x', new ItemStack(Block.stone));
 		GameRegistry.addRecipe(new ItemStack(modularChestBlock), "xxx", "xyx", "xxx",
 		        'y', new ItemStack(Block.chest), 'x', new ItemStack(Block.cobblestone));
 		GameRegistry.addRecipe(new ItemStack(stackSizeUpgradeItem), "xxx", "xcx", "xxx", 
-				'x', new ItemStack(Item.redstone), 'c', new ItemStack(coreAddItem));
+				'x', new ItemStack(Item.redstone), 'c', new ItemStack(coreUpgradeItem));
 		GameRegistry.addRecipe(new ItemStack(breakableUpgradeItem), "xxx", "xcx", "xxx", 
-				'x', new ItemStack(Item.dyePowder, 1, 4), 'c', new ItemStack(coreAddItem));
+				'x', new ItemStack(Item.dyePowder, 1, 4), 'c', new ItemStack(coreUpgradeItem));
 		
 		StorageAddItemType.registreItems();
 		
@@ -101,6 +105,7 @@ public class ModularChests {
 				"ModularChestTileEntity");
 		ClientRegistry.bindTileEntitySpecialRenderer(
 				ModularChestTileEntity.class, new ModularChestRenderer());
+		MinecraftForgeClient.registerItemRenderer(modularBlockId, new ModularChestItemRender());
 		NetworkRegistry.instance().registerGuiHandler(instance, proxy);
 		
 		proxy.registerRenderInformation();

@@ -85,7 +85,7 @@ public class ModularChestUpgradesStorage {
 			return false;
 	}
 	
-	public int getGlobalItemCount()
+	public int getGlobalItemsCount()
 	{
 		return globalUpgrades.size();
 	}
@@ -93,6 +93,28 @@ public class ModularChestUpgradesStorage {
 	public ModularChestUpgradeItem getGlobalItem(int num)
 	{
 		return globalUpgrades.get(num);
+	}
+	
+	public int getAllItemsCount()
+	{
+		int sideCount = 0;
+		for (int i = 0; i < 6; i++)
+			if (upgrades[i] != null)
+				sideCount++;
+		return sideCount + globalUpgrades.size();
+	}
+	
+	public String[] getItemsInformation()
+	{
+		String[] res = new String[getAllItemsCount()];
+		int size = 0;
+		for (int i = 0; i < 6; i++)
+			if (upgrades[i] != null)
+				res[size++] = upgrades[i].getChatFormattingColor() + upgrades[i].getItemInformation();
+		for (int i = 0; i < globalUpgrades.size(); i++)
+			res[size++] = globalUpgrades.get(i).getChatFormattingColor() + globalUpgrades.get(i).getItemInformation();
+		
+		return res;
 	}
 
 	public void writeToNBT(NBTTagCompound tagCompound) {

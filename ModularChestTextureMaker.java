@@ -55,16 +55,17 @@ public class ModularChestTextureMaker {
 				sides[side] = null;
 		
 		globalTextures.clear();
-		for (int i = 0; i < storage.getGlobalItemCount(); i++)
+		for (int i = 0; i < storage.getGlobalItemsCount(); i++)
 		{
 			globalTextures.add(loadImageByName(storage.getGlobalItem(i).getTextureName()));
 		}
+		
+		mainTexture = loadImageByName("stoneChest.png");	
 	}
 	
 	public ModularChestTextureMaker(ModularChestUpgradesStorage aStorage) {
 		storage = aStorage;
-		loadTextures();
-		mainTexture = loadImageByName("stoneChest.png");		
+		loadTextures();	
 	}
 	
 	void drawCentered(Graphics2D g, int x, int y, int width, int height, BufferedImage img)
@@ -79,18 +80,10 @@ public class ModularChestTextureMaker {
 	public BufferedImage getTexture()
 	{
 		loadTextures();		 		
-		BufferedImage res = null;
-		
-		//FIXME copy of buffered image
-		try {
-			res = ImageIO.read(new File("mods/ModularChests/textures/model/stoneChest.png"));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		//mainTexture.getSubimage(0, 0, mainTexture.getWidth(), mainTexture.getHeight());
-		
-		
+		BufferedImage res = new BufferedImage(mainTexture.getWidth(), mainTexture.getHeight(), mainTexture.getType());
+				
 		Graphics2D g = res.createGraphics();
+		g.drawImage(mainTexture, 0, 0, null);
 		
 		//draw textures on sides
 		int nowX = xSide, nowY = ySide;

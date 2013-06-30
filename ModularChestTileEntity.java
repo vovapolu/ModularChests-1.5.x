@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import vovapolu.modularchests.block.ModularChestBaseBlock;
 import vovapolu.modularchests.items.ModularChestUpgradesStorage;
 
 import net.minecraft.entity.player.EntityPlayer;

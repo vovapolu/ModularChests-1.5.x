@@ -8,11 +8,11 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 
 public enum StorageAddItemType {	
-	WOOD("woodAddItem", "woodAddItem", "woodSide.png", "Wood Storage Module", 9, "www", "wcw", "www"),
-	STONE("stoneAddItem", "stoneAddItem", "stoneSide.png", "Stone Storage Module", 12, "sss", "scs", "sss"),
-	IRON("ironAddItem", "ironAddItem", "ironSide.png", "Iron Storage Module", 18, " i ", "ici", " i "),
-	GOLD("goldAddItem", "goldAddItem", "goldSide.png", "Gold Storage Module", 36, " g ", "gcg", " g "),
-	DIAMOND("diamondAddItem", "diamondAddItem", "diamondSide.png", "Diamond Storage Module", 72, "dcd");
+	WOOD("woodAddItem", "woodAddItem", "woodSide.png", "Wood Storage Upgrade", 9, "www", "wcw", "www"),
+	STONE("stoneAddItem", "stoneAddItem", "stoneSide.png", "Stone Storage Upgrade", 12, "sss", "scs", "sss"),
+	IRON("ironAddItem", "ironAddItem", "ironSide.png", "Iron Storage Upgrade", 18, " i ", "ici", " i "),
+	GOLD("goldAddItem", "goldAddItem", "goldSide.png", "Gold Storage Upgrade", 36, " g ", "gcg", " g "),
+	DIAMOND("diamondAddItem", "diamondAddItem", "diamondSide.png", "Diamond Storage Upgrade", 72, "dcd");
 	
 	private String name;
 	private String iconName;
@@ -41,7 +41,7 @@ public enum StorageAddItemType {
 		GameRegistry.addRecipe(new ItemStack(item), recipes,
 		        'w', new ItemStack(Block.wood), 's', new ItemStack(Block.stone),
 		        'i', new ItemStack(Item.ingotIron), 'g', new ItemStack(Item.ingotGold),
-		        'd', new ItemStack(Item.diamond), 'c', new ItemStack(ModularChests.coreAddItem));
+		        'd', new ItemStack(Item.diamond), 'c', new ItemStack(ModularChests.coreUpgradeItem));
 	}
 	
 	public static void registreItems()

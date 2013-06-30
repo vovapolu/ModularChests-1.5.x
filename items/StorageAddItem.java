@@ -3,6 +3,7 @@ package vovapolu.modularchests.items;
 import vovapolu.modularchests.ModularChestTileEntity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.World;
 
 public class StorageAddItem extends ModularChestUpgradeItem {
@@ -17,18 +18,22 @@ public class StorageAddItem extends ModularChestUpgradeItem {
 	@Override
 	public void onUseItem(ModularChestTileEntity tileEnity,
 			EntityPlayer player, World world, int side) {	
+		if (tileEnity == null)
+			return;
 		tileEnity.addStorageSlots(addSize);
+	}
+	
+	@Override
+	public void onRemoveItem(ModularChestTileEntity tileEnity,
+			EntityPlayer player, World world, int side) {
+		if (tileEnity == null)
+			return;
+		tileEnity.removeStorageSlots(addSize);
 	}
 	
 	public boolean isValidSide(int side)
 	{
 		return side < 4;
-	}
-
-	@Override
-	public void onRemoveItem(ModularChestTileEntity tileEnity,
-			EntityPlayer player, World world, int side) {
-		tileEnity.removeStorageSlots(addSize);
 	}
 
 	@Override
@@ -44,5 +49,10 @@ public class StorageAddItem extends ModularChestUpgradeItem {
 	@Override
 	public boolean isUniqueItem() {
 		return false;
+	}
+	
+	@Override
+	public EnumChatFormatting getChatFormattingColor() {
+		return EnumChatFormatting.YELLOW;
 	}
 }

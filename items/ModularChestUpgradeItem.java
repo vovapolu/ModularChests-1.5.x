@@ -1,10 +1,11 @@
 package vovapolu.modularchests.items;
 
-import vovapolu.modularchests.ModularChestBaseBlock;
 import vovapolu.modularchests.ModularChestTileEntity;
 import vovapolu.modularchests.PacketHandler;
+import vovapolu.modularchests.block.ModularChestBaseBlock;
 import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.common.network.Player;
+import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.renderer.texture.IconRegister;
@@ -13,6 +14,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.World;
 
 public abstract class ModularChestUpgradeItem extends Item {	
@@ -44,6 +46,16 @@ public abstract class ModularChestUpgradeItem extends Item {
 	public abstract void onUseItem(ModularChestTileEntity tileEntity, EntityPlayer player, World world, int side);
 	public abstract void onRemoveItem(ModularChestTileEntity tileEntity, EntityPlayer player, World world, int side);
 	public abstract boolean applyItemToStorage(ModularChestUpgradesStorage storage, EntityPlayer player, int side);
+	
+	public String getItemInformation()
+	{
+		return LanguageRegistry.instance().getStringLocalization(this.getUnlocalizedName() + ".name");
+	}
+	
+	public EnumChatFormatting getChatFormattingColor()
+	{
+		return EnumChatFormatting.WHITE;
+	}
 	
 	public void onRemoveItem(ModularChestTileEntity tileEntity, EntityPlayer player, World world)
 	{

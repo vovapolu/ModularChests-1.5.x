@@ -9,6 +9,7 @@ import net.minecraft.client.model.ModelBiped;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.World;
 
 public class BreakableUpgradeItem extends ModularChestUpgradeItem {
@@ -21,6 +22,8 @@ public class BreakableUpgradeItem extends ModularChestUpgradeItem {
 	@Override
 	public void onUseItem(ModularChestTileEntity tileEnity,
 			EntityPlayer player, World world, int side) {
+		if (tileEnity == null)
+			return;
 		tileEnity.isBreakable = true;
 		tileEnity.isLocked = true;
 	}
@@ -28,6 +31,8 @@ public class BreakableUpgradeItem extends ModularChestUpgradeItem {
 	@Override
 	public void onRemoveItem(ModularChestTileEntity tileEnity,
 			EntityPlayer player, World world, int side) {
+		if (tileEnity == null)
+			return;
 		tileEnity.isBreakable = false;
 		tileEnity.isLocked = false;
 	}
@@ -50,6 +55,11 @@ public class BreakableUpgradeItem extends ModularChestUpgradeItem {
 	@Override
 	public boolean isUniqueItem() {
 		return true;
+	}
+	
+	@Override
+	public EnumChatFormatting getChatFormattingColor() {
+		return EnumChatFormatting.BLUE;
 	}
 
 }

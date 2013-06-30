@@ -3,6 +3,7 @@ package vovapolu.modularchests.items;
 import vovapolu.modularchests.ModularChestTileEntity;
 import vovapolu.modularchests.ModularChests;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.World;
 
 public class StackSizeUpgradeItem extends ModularChestUpgradeItem {
@@ -14,6 +15,8 @@ public class StackSizeUpgradeItem extends ModularChestUpgradeItem {
 	@Override
 	public void onUseItem(ModularChestTileEntity tileEnity,
 			EntityPlayer player, World world, int side) {
+		if (tileEnity == null)
+			return;
 		tileEnity.setStackLimit(1);
 		tileEnity.setInventoryFactor(ModularChests.inventoryFactor);
 	}
@@ -21,6 +24,8 @@ public class StackSizeUpgradeItem extends ModularChestUpgradeItem {
 	@Override
 	public void onRemoveItem(ModularChestTileEntity tileEnity,
 			EntityPlayer player, World world, int side) {	
+		if (tileEnity == null)
+			return;
 		tileEnity.setStackLimit(64);
 		tileEnity.setInventoryFactor(1);
 	}
@@ -43,6 +48,11 @@ public class StackSizeUpgradeItem extends ModularChestUpgradeItem {
 	@Override
 	public boolean isUniqueItem() { 
 		return true;
+	}
+	
+	@Override
+	public EnumChatFormatting getChatFormattingColor() {
+		return EnumChatFormatting.RED;
 	}
 
 }
