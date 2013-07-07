@@ -20,7 +20,7 @@ public class ModularChestItemRender implements IItemRenderer {
 	@Override
 	public void renderItem(ItemRenderType type, ItemStack item, Object... data) {
 		double dx = 0.0, dy = 0.0, dz = 0.0;
-		if(type != ItemRenderType.FIRST_PERSON_MAP && type != ItemRenderType.EQUIPPED)
+		if(type != ItemRenderType.EQUIPPED && type != ItemRenderType.EQUIPPED_FIRST_PERSON)
 		{
 			dx = -0.5;
 			dy = -0.5;

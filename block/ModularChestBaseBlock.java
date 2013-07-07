@@ -69,7 +69,7 @@ public class ModularChestBaseBlock extends BlockContainer {
 	
 	public ModularChestBaseBlock(int id, Material material) {
 		super(id, material);
-		setHardness(0.5F);
+		setHardness(2.5F);
 		setBlockBounds(minX, minY, minZ, maxX, maxY, maxZ);
 		setStepSound(Block.soundStoneFootstep);
 		setCreativeTab(CreativeTabs.tabDecorations);

@@ -129,7 +129,7 @@ public class GuiScrollChest extends GuiContainer {
 	
 	@Override
 	protected void drawGuiContainerForegroundLayer(int par1, int par2) {
-		int nowRow = container.getShiftRow(scrollVal);
+		/*int nowRow = container.getShiftRow(scrollVal);
 		final int xPad = -5;
 		final int yPad = 20;
 		for (int i = 0; i < 5; i++)
@@ -138,7 +138,7 @@ public class GuiScrollChest extends GuiContainer {
 			this.mc.fontRenderer.drawString(String.valueOf(nowRow + i + 1), 
 					-stringWidth + xPad, yPad + i * 18, 
 					0xffffff, true);
-		}
+		}*/
 	}
 
 	@Override
@@ -149,11 +149,18 @@ public class GuiScrollChest extends GuiContainer {
 		this.drawTexturedModalRect(xGui + barX, yGui + barY + 
 				(int)((float)(barHeight - pHeight) * this.scrollVal), 
 				195, 0, pWidth, pHeight);
-
+		
 		for (int row = 0; row < ScrollContainer.slotsHeight; row++)
 			for (int column = 0; column < ScrollContainer.slotsWidth; column++)
 				if (!container.isValidSlot(row * ScrollContainer.slotsWidth + column))	
 					this.drawTexturedModalRect(xGui - 1 + 9 + 18 * column, yGui - 1 + 18 + 18 * row, 207, 0, 18, 18);
+		
+		if (Keyboard.isKeyDown(Keyboard.KEY_C))
+			this.mc.renderEngine.bindTexture("/mods/ModularChests/textures/gui/craftModule.png");
+		else 
+			this.mc.renderEngine.bindTexture("/mods/ModularChests/textures/gui/chestModule.png");
+		int craftWidth = 90, craftHeight = 90;
+		this.drawTexturedModalRect(xGui + 8, yGui + 17, 0, 0, craftWidth, craftHeight);
 		
 	}
 }

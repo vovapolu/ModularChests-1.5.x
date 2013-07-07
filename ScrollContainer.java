@@ -22,8 +22,7 @@ public class ScrollContainer extends Container {
 			ModularChestTileEntity te) {
 		inventoryPlayer = aInventoryPlayer;
 		tileEntity = te;
-		te.openChest();
-
+		te.openChest();		
 		for (int column = 0; column < slotsWidth; column++)
 			addSlotToContainer(new ScrollChestSlot(inventoryPlayer, column,
 					9 + 18 * column, 170));
@@ -75,7 +74,7 @@ public class ScrollContainer extends Container {
 			ItemStack stackInSlot = slotObject.getStack();
 			stack = stackInSlot.copy();
 
-			if (slot > 36) {
+			if (slot >= 36) {
 				if (!this.mergeItemStack(stackInSlot, 0, 36, true)) {
 					return null;
 				}

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 import vovapolu.modularchests.ModularChestTileEntity;
+import vovapolu.modularchests.block.ModularChestBaseBlock;
 
 import cpw.mods.fml.common.registry.GameData;
 
@@ -45,6 +46,8 @@ public class ModularChestUpgradesStorage {
 			if (upgrades[side] != null)
 			{
 				itemsId.remove(upgrades[side].itemID);
+				ModularChestBaseBlock.dropItem(new ItemStack(upgrades[side]), tileEntity.worldObj, 
+						tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord);
 				upgrades[side].onRemoveItem(tileEntity, player, tileEntity.worldObj, side);
 			}
 			upgrades[side] = newItem;
@@ -102,6 +105,20 @@ public class ModularChestUpgradesStorage {
 			if (upgrades[i] != null)
 				sideCount++;
 		return sideCount + globalUpgrades.size();
+	}
+	
+	public ArrayList<GUIUpgradeItem> getGuiModuleItems()
+	{
+		ArrayList<GUIUpgradeItem> res = new ArrayList<GUIUpgradeItem>();
+		for (int i = 0; i < 6; i++)
+			if (upgrades[i] instanceof GUIUpgradeItem)
+				res.add((GUIUpgradeItem) upgrades[i]);
+		
+		for(ModularChestUpgradeItem item: globalUpgrades)
+			if (item instanceof GUIUpgradeItem)
+				res.add((GUIUpgradeItem) item);
+		
+		return res;
 	}
 	
 	public String[] getItemsInformation()

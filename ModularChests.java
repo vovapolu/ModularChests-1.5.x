@@ -1,12 +1,16 @@
 package vovapolu.modularchests;
 
+import java.io.PrintStream;
+
+import com.google.common.io.ByteStreams;
+
 import vovapolu.modularchests.block.ModularChestBaseBlock;
 import vovapolu.modularchests.block.ModularChestItemBlock;
 import vovapolu.modularchests.items.BreakableUpgradeItem;
 import vovapolu.modularchests.items.CoreAddItem;
 import vovapolu.modularchests.items.ModularChestItemRender;
 import vovapolu.modularchests.items.StackSizeUpgradeItem;
-import vovapolu.modularchests.items.StorageAddItemType;
+import vovapolu.modularchests.items.StorageUpgradeItemType;
 import net.minecraft.item.ItemStack;
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.common.Mod;
@@ -41,6 +45,15 @@ public class ModularChests {
 
 	@SidedProxy(clientSide = "vovapolu.modularchests.client.ClientProxy", serverSide = "vovapolu.modularchests.CommonProxy")
 	public static CommonProxy proxy;
+	
+	public static PrintStream debugStream;
+	
+	static {
+		if (Boolean.getBoolean("DEBUG"))
+			debugStream = System.out;
+		else 
+			debugStream = new PrintStream(ByteStreams.nullOutputStream());
+	}
 
 	public static Block modularChestBlock;
 	public static Item coreUpgradeItem;
@@ -59,7 +72,7 @@ public class ModularChests {
 	public void preInit(FMLPreInitializationEvent event) {
 		Configuration cfg = new Configuration(
 				event.getSuggestedConfigurationFile());
-		cfg.load();
+		cfg.load();		
 		modularBlockId = cfg.getBlock("ModularChest", 500).getInt();
 		addItemId = cfg.getItem("AddItem", 6002).getInt();
 		coreAddItemId = cfg.getItem("CoreAddItem", 6001).getInt();
@@ -99,7 +112,7 @@ public class ModularChests {
 		GameRegistry.addRecipe(new ItemStack(breakableUpgradeItem), "xxx", "xcx", "xxx", 
 				'x', new ItemStack(Item.dyePowder, 1, 4), 'c', new ItemStack(coreUpgradeItem));
 		
-		StorageAddItemType.registreItems();
+		StorageUpgradeItemType.registreItems();
 		
 		GameRegistry.registerTileEntity(ModularChestTileEntity.class,
 				"ModularChestTileEntity");

@@ -30,7 +30,6 @@ public class ClientProxy extends CommonProxy{
         TileEntity te = world.getBlockTileEntity(x, y, z);
         if (te != null && te instanceof ModularChestTileEntity)
         {
-        	System.out.println("gui size:" + ((ModularChestTileEntity) te).getSizeInventory());
             return new GuiScrollChest(player.inventory, (ModularChestTileEntity) te);
         }
         else

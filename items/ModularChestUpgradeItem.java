@@ -1,6 +1,7 @@
 package vovapolu.modularchests.items;
 
 import vovapolu.modularchests.ModularChestTileEntity;
+import vovapolu.modularchests.ModularChests;
 import vovapolu.modularchests.PacketHandler;
 import vovapolu.modularchests.block.ModularChestBaseBlock;
 import cpw.mods.fml.common.network.PacketDispatcher;
@@ -96,7 +97,7 @@ public abstract class ModularChestUpgradeItem extends Item {
 	@Override
     public boolean onItemUseFirst(ItemStack stack, EntityPlayer player, World world, int X, int Y, int Z, int side, float hitX, float hitY, float hitZ)
     {
-		System.out.println(hitX + " " + hitY + " " + hitZ);
+		ModularChests.debugStream.println(hitX + " " + hitY + " " + hitZ);
         if (world.isRemote) return false;        
         TileEntity te = world.getBlockTileEntity(X, Y, Z);
         ModularChestTileEntity newChest;        
@@ -110,7 +111,7 @@ public abstract class ModularChestUpgradeItem extends Item {
             ModularChestUpgradeItem sideItem = modularChest.upgradesStorage.getSideItem(realSide);
             
             if (!applyItemToTileEntity(realSide, modularChest, player))
-            	return false;                       
+            	return false;        
                 
         	PacketDispatcher.sendPacketToAllPlayers(PacketHandler.createTEPacket(modularChest));      
         	stack.stackSize--;	  

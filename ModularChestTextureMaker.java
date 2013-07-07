@@ -4,10 +4,14 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import javax.imageio.ImageIO;
+
+import net.minecraft.client.Minecraft;
+import net.minecraftforge.client.model.AdvancedModelLoader;
 
 import scala.util.control.Exception;
 import vovapolu.modularchests.items.ModularChestUpgradesStorage;
@@ -16,6 +20,7 @@ public class ModularChestTextureMaker {
 	private BufferedImage mainTexture;
 	private BufferedImage sides[] = new BufferedImage[6];
 	private ArrayList<BufferedImage> globalTextures = new ArrayList<BufferedImage>();
+	private BufferedImage resImage;
 	
 	private static HashMap<String, BufferedImage> images = new HashMap<String, BufferedImage>();
 	/**
@@ -34,11 +39,12 @@ public class ModularChestTextureMaker {
 			return images.get(name);
 		}
 		else 
-		{
-			try {
-				BufferedImage image = ImageIO.read(new File(
-						"mods/ModularChests/textures/model/" + name));
-				return images.put(name, image);
+		{			
+			try {		
+				InputStream istream = ModularChestTextureMaker.class.getResourceAsStream("/mods/ModularChests/textures/model/" + name);
+				BufferedImage image = ImageIO.read(istream);				
+				images.put(name, image);
+				return image;
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -48,24 +54,30 @@ public class ModularChestTextureMaker {
 		
 	public void loadTextures()
 	{
+		if (storage == null)
+			return;
 		for (int side = 0; side < 6; side++)
 			if (storage.getSideItem(side) != null)
 				sides[side] = loadImageByName(storage.getSideItem(side).getTextureName());
 			else 
 				sides[side] = null;
 		
-		globalTextures.clear();
+		if (globalTextures.size() != storage.getGlobalItemsCount())
+			globalTextures.clear();
 		for (int i = 0; i < storage.getGlobalItemsCount(); i++)
 		{
-			globalTextures.add(loadImageByName(storage.getGlobalItem(i).getTextureName()));
+			BufferedImage newImage = loadImageByName(storage.getGlobalItem(i).getTextureName());
+			if (globalTextures.size() <= i)
+				globalTextures.add(newImage);
+			else 
+				globalTextures.set(i, newImage);
 		}
 		
 		mainTexture = loadImageByName("stoneChest.png");	
 	}
 	
 	public ModularChestTextureMaker(ModularChestUpgradesStorage aStorage) {
-		storage = aStorage;
-		loadTextures();	
+		storage = aStorage;	
 	}
 	
 	void drawCentered(Graphics2D g, int x, int y, int width, int height, BufferedImage img)
@@ -77,12 +89,20 @@ public class ModularChestTextureMaker {
 		g.drawImage(img, posX, posY, null);
 	}
 	
+	public void setStorage(ModularChestUpgradesStorage aStorage)
+	{
+		storage = aStorage;
+	}
+	
 	public BufferedImage getTexture()
 	{
-		loadTextures();		 		
-		BufferedImage res = new BufferedImage(mainTexture.getWidth(), mainTexture.getHeight(), mainTexture.getType());
+		if (storage == null)
+			return null;
+		loadTextures();			
+		if (resImage == null)
+			resImage = new BufferedImage(mainTexture.getWidth(), mainTexture.getHeight(), mainTexture.getType());
 				
-		Graphics2D g = res.createGraphics();
+		Graphics2D g = resImage.createGraphics();
 		g.drawImage(mainTexture, 0, 0, null);
 		
 		//draw textures on sides
@@ -101,6 +121,6 @@ public class ModularChestTextureMaker {
 		
 		g.dispose();
 		
-		return res;
+		return resImage;
 	}
 }

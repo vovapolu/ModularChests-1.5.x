@@ -1,10 +1,14 @@
 package vovapolu.modularchests;
 
+import java.util.HashMap;
 import java.util.Random;
 
 import org.lwjgl.opengl.GL11;
 
+import paulscode.sound.Vector3D;
+
 import vovapolu.modularchests.items.ModularChestUpgradesStorage;
+import vovapolu.util.Point3i;
 
 import com.google.common.primitives.SignedBytes;
 
@@ -18,6 +22,7 @@ import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Vec3;
 
 import static org.lwjgl.opengl.GL11.GL_COMPILE_AND_EXECUTE;
 import static org.lwjgl.opengl.GL11.glCallList;
@@ -37,14 +42,16 @@ public class ModularChestRenderer extends TileEntitySpecialRenderer {
 
 	static private ModelChest model = new ModelChest();
 	static private Random random = new Random();
+	static private ModularChestTextureMaker textureMaker = new ModularChestTextureMaker(null);
 	
 	public ModularChestRenderer() {		
 	}
 	
 	static public void render(ModularChestUpgradesStorage storage, double x, double y, double z, 
 			float prevAngle, float angle, int facing, float particalTick)
-	{
-		ModularChestTextureMaker textureMaker = new ModularChestTextureMaker(storage);
+	{		
+		Point3i point = new Point3i((int)x, (int)y, (int)z);
+		textureMaker.setStorage(storage);
 			
 		int num = FMLClientHandler.instance().getClient().renderEngine.allocateAndSetupTexture(textureMaker.getTexture());		
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, num);

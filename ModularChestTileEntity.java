@@ -99,8 +99,6 @@ public class ModularChestTileEntity extends TileEntity implements
 	public void setInventorySlotContents(int slot, ItemStack stack) {
 		if (slot < inv.size())
 		{
-			if (stack != inv.get(slot))
-				System.out.println(slot + " " + stack + " " + inv.size());
 			inv.set(slot, stack);
 			if (stack != null && stack.stackSize > getInventoryStackLimit()) {
 				stack.stackSize = getInventoryStackLimit();
@@ -149,7 +147,6 @@ public class ModularChestTileEntity extends TileEntity implements
 
 	@Override
 	public void openChest() {
-		System.out.println("Chest opened");
 		if (numUsingPlayers < 0) {
 			numUsingPlayers = 0;
 		}
@@ -366,17 +363,18 @@ public class ModularChestTileEntity extends TileEntity implements
                 if (nowStack != null && nowStack.itemID == stack.itemID && (!stack.getHasSubtypes() || stack.getItemDamage() == nowStack.getItemDamage()) && ItemStack.areItemStackTagsEqual(stack, nowStack))
                 {
                     int sum = nowStack.stackSize + stack.stackSize;
-
-                    if (sum <= stack.getMaxStackSize())
+                    int limit = Math.min(stack.getMaxStackSize(), getInventoryStackLimit());
+                
+                    if (sum <= limit)
                     {
                         stack.stackSize = 0;
                         nowStack.stackSize = sum;     
                         changed = true;
                     }
-                    else if (nowStack.stackSize < stack.getMaxStackSize())
+                    else if (nowStack.stackSize < limit)
                     {
-                        stack.stackSize -= stack.getMaxStackSize() - nowStack.stackSize;
-                        nowStack.stackSize = stack.getMaxStackSize();
+                        stack.stackSize -= limit - nowStack.stackSize;
+                        nowStack.stackSize = limit;
                         changed = true;
                     }
                 }
@@ -394,12 +392,20 @@ public class ModularChestTileEntity extends TileEntity implements
 
                 if (nowStack == null)
                 {
-                    inv.set(i, stack.copy());                    
-                    stack.stackSize = 0; 
-                    changed = true;
-                    break;
+                	ItemStack newStack;
+                	if (stack.stackSize >= getInventoryStackLimit())            
+                		newStack = stack.splitStack(getInventoryStackLimit());
+                	else 
+                	{
+                		newStack = stack.copy();
+                		stack.stackSize = 0;
+                	}
+                    inv.set(i, newStack.copy());                                        
+                    changed = true;                    
+                    
+                    if (stack.stackSize == 0)
+                    	break;
                 }
-
                 ++i;
             }
         }

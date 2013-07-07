@@ -91,7 +91,6 @@ public class PacketHandler implements IPacketHandler {
 				e.printStackTrace();
 			}
 			
-			System.out.println("packet handled");
 		}
 
 		if (packet.channel.equals("UTE")) {
@@ -178,7 +177,6 @@ public class PacketHandler implements IPacketHandler {
 		packet.length = array.size();
 		packet.channel = "SB";
 
-		System.out.println("Packet created.");
 		packetTime = System.currentTimeMillis();
 		return packet;
 	}
